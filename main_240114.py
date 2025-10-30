@@ -466,7 +466,7 @@ def demo():
         print("Model  name   = " + str(camera.getModelName(camera)))
         print("Serial number = " + str(camera.getSerialNumber(camera)))
     time.sleep(2)    
-    camera = cameraList[0]
+    camera = cameraList[1]
 
     # 打开相机
     nRet = openCamera(camera)
