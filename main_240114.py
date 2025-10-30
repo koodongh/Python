@@ -451,7 +451,7 @@ def demo():
     
     # PLC 초기화
     plc = SimplePLC('192.168.1.13', slot=0)  # PLC IP 주소를 실제 값으로 변경하세요
-    PLC_TAG = 'M1905_IG_DETECT_INPUT'
+    PLC_TAG = 'M1908_IG_DETECT_INPUT'
     
     cameraCnt, cameraList = enumCameras()
     if cameraCnt is None:
