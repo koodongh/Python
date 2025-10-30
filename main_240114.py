@@ -558,7 +558,7 @@ def demo():
                 
                 # 비동기로 PLC 펄스 신호 전송 (블로킹 없이 즉시 반환)
                 print(f'Starting async PLC pulse signal...')
-                plc.write_async(PLC_TAG, True, duration=1.5)
+                plc.write_async(PLC_TAG, True, duration=0.1)
                 
                 os.remove(r)
             if cnt == 1 :
