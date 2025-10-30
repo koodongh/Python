@@ -499,8 +499,8 @@ def demo():
         print("vendor name   = " + str(camera.getVendorName(camera)))
         print("Model  name   = " + str(camera.getModelName(camera)))
         print("Serial number = " + str(camera.getSerialNumber(camera)))
-    time.sleep(2)    
-    camera = cameraList[1]
+    time.sleep(1)    
+    camera = cameraList[2]
 
     # 打开相机
     nRet = openCamera(camera)
