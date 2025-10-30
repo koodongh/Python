@@ -19,6 +19,7 @@ import sys
 import send_240114
 import multiprocessing
 from pylogix import PLC
+import threading
 
 g_cameraStatusUserInfo = b"statusInfo"
 
@@ -31,11 +32,44 @@ class SimplePLC:
         self.plc = PLC()
         self.plc.IPAddress = ip_address
         self.plc.ProcessorSlot = slot
+    
     def read(self, tag):
         return self.plc.Read(tag)
 
     def write(self, tag, value):
-        return self.plc.Write(tag, value)
+        try:
+            result = self.plc.Write(tag, value)
+            return result
+        except Exception as e:
+            print(f"PLC write error: {e}")
+            return None
+    
+    def write_async(self, tag, value, duration=0.0):
+        """비동기로 PLC에 쓰기 - Pulse 신호 생성"""
+        def pulse_signal():
+            try:
+                start_time = time.time()
+                print(f"Async PLC write {tag} = True at {time.time()}")
+                self.write(tag, True)
+                write_duration = time.time() - start_time
+                print(f'Async PLC write(True) took: {write_duration:.3f} seconds')
+                
+                # duration 동안 대기
+                if duration > 0:
+                    time.sleep(duration)
+                
+                start_time = time.time()
+                print(f"Async PLC write {tag} = False at {time.time()}")
+                self.write(tag, False)
+                write_duration = time.time() - start_time
+                print(f'Async PLC write(False) took: {write_duration:.3f} seconds')
+                print(f"Async PLC pulse completed")
+            except Exception as e:
+                print(f"Async PLC write error: {e}")
+        
+        thread = threading.Thread(target=pulse_signal, daemon=True)
+        thread.start()
+        return thread
     
     def close(self):
         if hasattr(self, 'plc'):
@@ -521,9 +555,11 @@ def demo():
         
             if os.path.exists(r):
                 print('Detect IG ===')
-                plc.write(PLC_TAG, True)
-                time.sleep(1.5)
-                plc.write(PLC_TAG, False)
+                
+                # 비동기로 PLC 펄스 신호 전송 (블로킹 없이 즉시 반환)
+                print(f'Starting async PLC pulse signal...')
+                plc.write_async(PLC_TAG, True, duration=1.5)
+                
                 os.remove(r)
             if cnt == 1 :
                 break
